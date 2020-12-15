@@ -1,17 +1,23 @@
 <template>
   <div id="app">
-    <FeatureView :feature="feature"/>
+    <FeatureView :feature="this.feature"/>
   </div>
 </template>
 
 <script>
 import FeatureView from "@/views/FeatureView";
 import GherkinParser from "@/services/GherkinParser";
+import GitRepoService from "@/services/GitRepoService";
 
 export default {
   components: {FeatureView},
   created() {
-    this.feature = GherkinParser.printGherkinStream()
+    GitRepoService.getFeature().then(response => {
+      this.feature = GherkinParser.parseFeatureFile(response.data)
+    })
+        .catch(error => {
+          console.log(error)
+        })
   },
   data() {
     return {
